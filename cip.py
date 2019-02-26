@@ -100,12 +100,12 @@ def FrameCapture():
     filename_inc =1
     simple_crop = False
     single_crop = False
+    success, image = vidObj.read() 
     while success:  
         # checks whether frames were extracted 
         success, image = vidObj.read() 
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        # Display the resulting frame
-        cv2.imshow('frame',gray)
+        
+        cv2.imshow('frame',image)
         # Saves the frames with frame-count 
         cv2.imwrite("frame.jpg", image) 
         count += 1
@@ -130,6 +130,18 @@ def FrameCapture():
                     size_array.sort()
                     short_side = size_array[0]
                     crop_area = (face_rect.left() - size_array[0] , face_rect.top() - size_array[0], face_rect.right() + size_array[0],         face_rect.bottom() + size_array[0])
+                he,wi, c= image.shape
+                W1=wi//2-wi//6
+                W2=wi//2+wi//6
+                x=face_rect.left()
+                w=width
+                x1=x+w
+                if (W1<x and W2>x1) or (W1>x and W2<x1) or (x-W1+w>=w//2 and W2>x1) or (W2-x1+w>=w//2 and W1<x) :
+                   print("Person at center focusing straight mode")
+                elif (W1>x1 and W1>x) or (W1>x and x1-W1+w>=w//2)  :
+                   print("Preson at Left turning left mode")
+                else : 
+                    print("Person at Right turning right mode")
                 cropped_image = image_to_crop.crop(crop_area)
                 crop_size = (crop_width, crop_width)
                 cropped_image.thumbnail(crop_size)
